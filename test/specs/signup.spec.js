@@ -32,7 +32,7 @@ describe('Signup', () => {
 
       await SignupPage.signup(data.email, data.password, data.confirmPassword);
 
-      const errorText = await $(`//*[contains(@text,"${data.expectedError}")]`);
+      const errorText = await SignupPage.getValidationError(data.expectedError);
       expect(await errorText.isDisplayed()).to.be.true;
     });
   });

@@ -39,6 +39,11 @@ class SignupPage extends BasePage {
   async dismissAlert() {
     await this.dismissAlertByText('OK');
   }
+
+  async getValidationError(expectedText) {
+    const errorEl = await this.findByText(expectedText, false);
+    return errorEl;
+  }
 }
 
 module.exports = new SignupPage();

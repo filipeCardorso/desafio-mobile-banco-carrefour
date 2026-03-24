@@ -6,9 +6,11 @@ const loginData = require('../data/loginData.json');
 
 describe('Login', () => {
   before(async () => {
-    await driver.pause(2000);
+    const homeTab = await $('~Home');
+    await homeTab.waitForDisplayed({ timeout: 15000 });
     await NavigationBar.navigateTo('login');
-    await driver.pause(1000);
+    const loginScreen = await $('~Login-screen');
+    await loginScreen.waitForDisplayed({ timeout: 10000 });
   });
 
   // Scenario 3: Login with empty fields (runs first - clean state)
@@ -16,11 +18,9 @@ describe('Login', () => {
     allure.addFeature('Login');
     allure.addSeverity('normal');
 
-    // Tap login without entering anything
     await LoginPage.tapElement(LoginPage.loginButton);
-    await driver.pause(1000);
 
-    // Verify still on login screen (button still visible)
+    // Verify still on login screen
     expect(await LoginPage.isDisplayed(LoginPage.loginButton)).to.be.true;
     // Verify email field still has placeholder text
     const emailField = await LoginPage.emailField;
@@ -28,24 +28,25 @@ describe('Login', () => {
     expect(emailText === 'Email' || emailText === '' || emailText === null).to.be.true;
   });
 
-  // Scenario 2: Login with invalid email format
+  // Scenario 2: Login with invalid email format shows validation error
   it('should show validation error for invalid email format', async () => {
     allure.addFeature('Login');
     allure.addSeverity('critical');
 
     await LoginPage.setValue(LoginPage.emailField, 'invalid-email');
-    await driver.pause(500);
 
-    // Check for inline email validation message
-    const errorMsg = await $('//*[contains(@text,"not a valid email") or contains(@text,"valid email") or contains(@text,"Please")]');
-    const hasError = await errorMsg.isExisting();
-    // If no inline error, verify login button is still there (field validation prevents action)
-    if (!hasError) {
-      expect(await LoginPage.isDisplayed(LoginPage.loginButton)).to.be.true;
+    // App shows inline validation for invalid email format
+    const validationError = await LoginPage.getValidationError('valid email');
+    const hasError = await validationError.isExisting();
+
+    if (hasError) {
+      expect(await validationError.isDisplayed()).to.be.true;
     } else {
-      expect(await errorMsg.isDisplayed()).to.be.true;
+      // If no inline error, verify login button still present
+      expect(await LoginPage.isDisplayed(LoginPage.loginButton)).to.be.true;
     }
-    // Clear field for next test
+
+    // Clear for next test
     await LoginPage.setValue(LoginPage.emailField, '');
   });
 

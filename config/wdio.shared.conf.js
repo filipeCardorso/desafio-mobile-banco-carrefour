@@ -46,7 +46,7 @@ exports.config = {
     const content = [
       `Platform=${cap.platformName || 'Unknown'}`,
       `Device=${cap['appium:deviceName'] || 'Unknown'}`,
-      `AppVersion=0.4.0`,
+      `AppVersion=2.2.0`,
       `Node=${process.version}`,
       `WebDriverIO=9.x`,
     ].join('\n');

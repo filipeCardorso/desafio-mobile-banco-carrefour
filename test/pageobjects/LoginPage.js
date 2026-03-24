@@ -26,6 +26,10 @@ class LoginPage extends BasePage {
   async dismissAlert() {
     await this.dismissAlertByText('OK');
   }
+
+  async getValidationError(expectedText) {
+    return this.findByText(expectedText, false);
+  }
 }
 
 module.exports = new LoginPage();
