@@ -65,28 +65,14 @@ class FormsPage extends BasePage {
   }
 
   async getAlertMessage() {
-    await driver.pause(1000);
-    const msgElement = await $('//android.widget.TextView[contains(@text,"This button")]');
-    try {
-      await msgElement.waitForDisplayed({ timeout: 5000 });
-      return msgElement.getText();
-    } catch {
-      const anyText = await $('//android.widget.TextView[string-length(@text) > 5]');
-      await anyText.waitForDisplayed({ timeout: 5000 });
-      return anyText.getText();
-    }
+    return this.getAlertText(['This button is', 'is active']);
   }
 
   async dismissAlert() {
-    // Try different button texts that the custom alert might use
     try {
-      const okBtn = await $('//*[@text="OK"]');
-      await okBtn.waitForDisplayed({ timeout: 3000 });
-      await okBtn.click();
+      await this.dismissAlertByText('OK');
     } catch {
-      const askLater = await $('//*[@text="Ask me later"]');
-      await askLater.waitForDisplayed({ timeout: 3000 });
-      await askLater.click();
+      await this.dismissAlertByText('Ask me later');
     }
   }
 }

@@ -13,18 +13,6 @@ class LoginPage extends BasePage {
     return $('~button-LOGIN');
   }
 
-  get errorMessage() {
-    return driver.isAndroid
-      ? $('//android.widget.TextView[@resource-id="android:id/message"]')
-      : $('//XCUIElementTypeStaticText[@name]');
-  }
-
-  get successMessage() {
-    return driver.isAndroid
-      ? $('//android.widget.TextView[@resource-id="android:id/message"]')
-      : $('//XCUIElementTypeStaticText[@name]');
-  }
-
   async login(email, password) {
     await this.setValue(this.emailField, email);
     await this.setValue(this.passwordField, password);
@@ -32,27 +20,11 @@ class LoginPage extends BasePage {
   }
 
   async getAlertMessage() {
-    // v2.2.0 uses custom React Native dialog
-    await driver.pause(1500);
-    // Try to find any dialog/alert text
-    const successMsg = await $('//*[@text="You are logged in!"]');
-    const isSuccess = await successMsg.isExisting();
-    if (isSuccess) {
-      return successMsg.getText();
-    }
-    // Check for inline validation error text
-    const errorMsg = await $('//*[contains(@text,"invalid") or contains(@text,"Invalid") or contains(@text,"Please")]');
-    const isError = await errorMsg.isExisting();
-    if (isError) {
-      return errorMsg.getText();
-    }
-    return '';
+    return this.getAlertText(['logged in', 'invalid', 'Invalid', 'Please']);
   }
 
   async dismissAlert() {
-    const okButton = await $('//*[@text="OK"]');
-    await okButton.waitForDisplayed({ timeout: 5000 });
-    await okButton.click();
+    await this.dismissAlertByText('OK');
   }
 }
 

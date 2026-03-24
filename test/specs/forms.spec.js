@@ -40,21 +40,16 @@ describe('Forms', () => {
     expect(await inactiveBtn.isDisplayed()).to.be.true;
     await inactiveBtn.click();
 
-    try {
-      const alert = driver.isAndroid
-        ? await $('//android.widget.TextView[@resource-id="android:id/message"]')
-        : await $('//XCUIElementTypeAlert');
-      const isAlertVisible = await alert.isDisplayed();
-      expect(isAlertVisible).to.be.false;
-    } catch {
-      // No alert found - expected behavior for inactive button
-    }
+    // Verify no alert appeared after tapping inactive button
+    await driver.pause(1000);
+    const alertMsg = await FormsPage.getAlertMessage();
+    expect(alertMsg).to.equal('');
 
     allure.addStep('Tap active button and verify alert message');
 
     await FormsPage.tapActiveButton();
-    const alertMsg = await FormsPage.getAlertMessage();
-    expect(alertMsg).to.be.a('string').and.not.empty;
+    const activeAlertMsg = await FormsPage.getAlertMessage();
+    expect(activeAlertMsg).to.be.a('string').and.not.empty;
     await FormsPage.dismissAlert();
   });
 });
