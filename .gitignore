@@ -1,0 +1,9 @@
+node_modules/
+allure-results/
+allure-report/
+app/android/*.apk
+app/ios/*.zip
+app/ios/*.app
+.DS_Store
+.env
+*.log
