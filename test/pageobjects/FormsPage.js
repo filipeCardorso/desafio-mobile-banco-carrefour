@@ -65,18 +65,29 @@ class FormsPage extends BasePage {
   }
 
   async getAlertMessage() {
-    const alert = driver.isAndroid
-      ? await $('//android.widget.TextView[@resource-id="android:id/message"]')
-      : await $('//XCUIElementTypeAlert//XCUIElementTypeStaticText[2]');
-    await this.waitForElement(alert);
-    return alert.getText();
+    await driver.pause(1000);
+    const msgElement = await $('//android.widget.TextView[contains(@text,"This button")]');
+    try {
+      await msgElement.waitForDisplayed({ timeout: 5000 });
+      return msgElement.getText();
+    } catch {
+      const anyText = await $('//android.widget.TextView[string-length(@text) > 5]');
+      await anyText.waitForDisplayed({ timeout: 5000 });
+      return anyText.getText();
+    }
   }
 
   async dismissAlert() {
-    const okButton = driver.isAndroid
-      ? await $('//android.widget.Button[@resource-id="android:id/button1"]')
-      : await $('~Ask me later');
-    await this.tapElement(okButton);
+    // Try different button texts that the custom alert might use
+    try {
+      const okBtn = await $('//*[@text="OK"]');
+      await okBtn.waitForDisplayed({ timeout: 3000 });
+      await okBtn.click();
+    } catch {
+      const askLater = await $('//*[@text="Ask me later"]');
+      await askLater.waitForDisplayed({ timeout: 3000 });
+      await askLater.click();
+    }
   }
 }
 

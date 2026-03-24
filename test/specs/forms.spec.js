@@ -17,9 +17,10 @@ describe('Forms', () => {
     const result = await FormsPage.getInputResult();
     expect(result).to.equal('Banco Carrefour');
 
+    const initialSwitchText = await FormsPage.getSwitchText();
     await FormsPage.toggleSwitch();
     const switchText = await FormsPage.getSwitchText();
-    expect(switchText).to.include('OFF').or.include('ON');
+    expect(switchText).to.not.equal(initialSwitchText);
 
     await FormsPage.selectDropdown('webdriver.io is awesome');
 

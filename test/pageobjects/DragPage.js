@@ -1,16 +1,22 @@
 const BasePage = require('./BasePage');
 
 class DragPage extends BasePage {
+  // v2.2.0 uses: drag-l1, drag-c1, drag-r1, drag-l2, drag-c2, drag-r2, drag-l3, drag-c3, drag-r3
+  // Pattern: position (l=left, c=center, r=right) + row (1-3)
+  get dragElements() {
+    return ['l1', 'c1', 'r1', 'l2', 'c2', 'r2', 'l3', 'c3', 'r3'];
+  }
+
   dragElement(index) {
-    return $(`~drag-l${Math.floor(index / 3) + 1}-c${(index % 3) + 1}`);
+    return $(`~drag-${this.dragElements[index]}`);
   }
 
   dropElement(index) {
-    return $(`~drop-l${Math.floor(index / 3) + 1}-c${(index % 3) + 1}`);
+    return $(`~drop-${this.dragElements[index]}`);
   }
 
   get retryText() {
-    return $('~Retry');
+    return $('~renew');
   }
 
   get congratsText() {

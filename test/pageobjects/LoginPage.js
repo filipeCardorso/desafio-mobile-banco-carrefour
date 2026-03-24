@@ -32,18 +32,27 @@ class LoginPage extends BasePage {
   }
 
   async getAlertMessage() {
-    const alert = driver.isAndroid
-      ? await $('//android.widget.TextView[@resource-id="android:id/message"]')
-      : await $('//XCUIElementTypeAlert//XCUIElementTypeStaticText[2]');
-    await this.waitForElement(alert);
-    return alert.getText();
+    // v2.2.0 uses custom React Native dialog
+    await driver.pause(1500);
+    // Try to find any dialog/alert text
+    const successMsg = await $('//*[@text="You are logged in!"]');
+    const isSuccess = await successMsg.isExisting();
+    if (isSuccess) {
+      return successMsg.getText();
+    }
+    // Check for inline validation error text
+    const errorMsg = await $('//*[contains(@text,"invalid") or contains(@text,"Invalid") or contains(@text,"Please")]');
+    const isError = await errorMsg.isExisting();
+    if (isError) {
+      return errorMsg.getText();
+    }
+    return '';
   }
 
   async dismissAlert() {
-    const okButton = driver.isAndroid
-      ? await $('//android.widget.Button[@resource-id="android:id/button1"]')
-      : await $('~Ok');
-    await this.tapElement(okButton);
+    const okButton = await $('//*[@text="OK"]');
+    await okButton.waitForDisplayed({ timeout: 5000 });
+    await okButton.click();
   }
 }
 

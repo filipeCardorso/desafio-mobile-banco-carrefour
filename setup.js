@@ -1,12 +1,11 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const https = require('https');
 
 const ANDROID_APP_URL =
-  'https://github.com/webdriverio/native-demo-app/releases/latest/download/Android-NativeDemoApp-0.4.0.apk';
+  'https://github.com/webdriverio/native-demo-app/releases/download/v2.2.0/android.wdio.native.app.v2.2.0.apk';
 const IOS_APP_URL =
-  'https://github.com/webdriverio/native-demo-app/releases/latest/download/iOS-NativeDemoApp-0.4.0.app.zip';
+  'https://github.com/webdriverio/native-demo-app/releases/download/v2.2.0/ios.simulator.wdio.native.app.v2.2.0.zip';
 
 function run(cmd, label) {
   console.log(`\n=> ${label}`);
@@ -19,28 +18,19 @@ function run(cmd, label) {
 }
 
 function download(url, dest) {
-  return new Promise((resolve, reject) => {
-    if (fs.existsSync(dest)) {
-      console.log(`  Already exists: ${dest}`);
-      return resolve();
+  if (fs.existsSync(dest)) {
+    const stats = fs.statSync(dest);
+    if (stats.size > 1000) {
+      console.log(`  Already exists: ${dest} (${(stats.size / 1024 / 1024).toFixed(1)}MB)`);
+      return;
     }
-    console.log(`  Downloading: ${path.basename(dest)}`);
-    const file = fs.createWriteStream(dest);
-    https.get(url, (res) => {
-      if (res.statusCode === 302 || res.statusCode === 301) {
-        https.get(res.headers.location, (res2) => {
-          res2.pipe(file);
-          file.on('finish', () => { file.close(); resolve(); });
-        }).on('error', reject);
-      } else {
-        res.pipe(file);
-        file.on('finish', () => { file.close(); resolve(); });
-      }
-    }).on('error', reject);
-  });
+    fs.unlinkSync(dest);
+  }
+  console.log(`  Downloading: ${path.basename(dest)}`);
+  execSync(`curl -L -o "${dest}" "${url}"`, { stdio: 'inherit' });
 }
 
-async function main() {
+function main() {
   console.log('=== Desafio Mobile - Setup ===\n');
 
   // 1. Check ANDROID_HOME
@@ -59,11 +49,11 @@ async function main() {
   fs.mkdirSync('app/android', { recursive: true });
   fs.mkdirSync('app/ios', { recursive: true });
 
-  await download(ANDROID_APP_URL, 'app/android/app-debug.apk');
-  await download(IOS_APP_URL, 'app/ios/wdiodemoapp.app.zip');
+  download(ANDROID_APP_URL, 'app/android/app-debug.apk');
+  download(IOS_APP_URL, 'app/ios/wdiodemoapp.app.zip');
 
   console.log('\n=== Setup complete! ===');
   console.log('Run: npm run test:android');
 }
 
-main().catch(console.error);
+main();

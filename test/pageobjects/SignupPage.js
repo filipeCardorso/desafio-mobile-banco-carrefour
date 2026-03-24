@@ -33,18 +33,22 @@ class SignupPage extends BasePage {
   }
 
   async getAlertMessage() {
-    const alert = driver.isAndroid
-      ? await $('//android.widget.TextView[@resource-id="android:id/message"]')
-      : await $('//XCUIElementTypeAlert//XCUIElementTypeStaticText[2]');
-    await this.waitForElement(alert);
-    return alert.getText();
+    await driver.pause(1000);
+    const msgElement = await $('//*[@text="You successfully signed up!"]');
+    try {
+      await msgElement.waitForDisplayed({ timeout: 5000 });
+      return msgElement.getText();
+    } catch {
+      const anyAlert = await $('//android.widget.TextView[contains(@text,"sign") or contains(@text,"Sign")]');
+      await anyAlert.waitForDisplayed({ timeout: 5000 });
+      return anyAlert.getText();
+    }
   }
 
   async dismissAlert() {
-    const okButton = driver.isAndroid
-      ? await $('//android.widget.Button[@resource-id="android:id/button1"]')
-      : await $('~Ok');
-    await this.tapElement(okButton);
+    const okButton = await $('//*[@text="OK"]');
+    await okButton.waitForDisplayed({ timeout: 5000 });
+    await okButton.click();
   }
 }
 

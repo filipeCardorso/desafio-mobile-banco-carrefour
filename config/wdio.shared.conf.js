@@ -32,10 +32,6 @@ exports.config = {
     ],
   ],
 
-  beforeEach: async function () {
-    await driver.reloadSession();
-  },
-
   afterTest: async function (test, context, { error, passed }) {
     if (!passed) {
       const screenshot = await browser.takeScreenshot();
