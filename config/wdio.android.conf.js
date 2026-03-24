@@ -7,8 +7,7 @@ exports.config = {
   capabilities: [
     {
       platformName: 'Android',
-      'appium:deviceName': 'Medium_Phone_API_36.1',
-      'appium:platformVersion': '16',
+      'appium:deviceName': 'emulator-5554',
       'appium:automationName': 'UiAutomator2',
       'appium:app': path.join(process.cwd(), 'app', 'android', 'app-debug.apk'),
       'appium:newCommandTimeout': 240,
