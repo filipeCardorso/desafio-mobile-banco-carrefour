@@ -4,14 +4,13 @@ on: [push, pull_request]
 
 jobs:
   test-android:
-    runs-on: macos-latest
+    runs-on: macos-13
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
       - uses: actions/setup-java@v4
         with:
@@ -19,7 +18,7 @@ jobs:
           java-version: 17
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Setup Appium
         run: npm run setup
@@ -27,14 +26,13 @@ jobs:
       - name: Start Android emulator and run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
+          api-level: 30
           arch: x86_64
-          profile: pixel_6
           script: npm run test:android
 
       - name: Generate Allure Report
         if: always()
-        run: npx allure generate allure-results --clean
+        run: npx allure-commandline generate allure-results -o allure-report
 
       - name: Upload Allure Report
         if: always()
