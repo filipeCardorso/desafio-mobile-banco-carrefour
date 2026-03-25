@@ -1,6 +1,6 @@
 # Desafio de Automacao de Testes Mobile - Banco Carrefour
 
-Projeto de automacao de testes mobile utilizando o aplicativo [native-demo-app](https://github.com/webdriverio/native-demo-app) do WebDriverIO.
+Projeto de automacao de testes mobile utilizando o aplicativo [native-demo-app](https://github.com/webdriverio/native-demo-app) (v2.2.0) do WebDriverIO.
 
 ## Stack
 
@@ -13,6 +13,8 @@ Projeto de automacao de testes mobile utilizando o aplicativo [native-demo-app](
 | Chai | 4.x |
 | Allure Report | 2.x |
 | Node.js | 20 |
+| ESLint | 8.x |
+| Prettier | 3.x |
 
 ## Pre-requisitos
 
@@ -20,7 +22,7 @@ Projeto de automacao de testes mobile utilizando o aplicativo [native-demo-app](
 - [Java JDK](https://adoptium.net/) 17+
 - **Para Android:** [Android SDK](https://developer.android.com/studio) com um emulador configurado
   - Variavel de ambiente `ANDROID_HOME` configurada
-  - Emulador AVD criado (ex: `Pixel_7_API_34` com API 34)
+  - Emulador AVD criado (qualquer device com API 30+)
 - **Para iOS:** [Xcode](https://developer.apple.com/xcode/) 15+ (apenas macOS)
   - Simulador iOS configurado (ex: iPhone 15)
 
@@ -28,8 +30,8 @@ Projeto de automacao de testes mobile utilizando o aplicativo [native-demo-app](
 
 ```bash
 # Clonar o repositorio
-git clone <repo-url>
-cd desafio-mobile
+git clone https://github.com/filipeCardorso/desafio-mobile-banco-carrefour.git
+cd desafio-mobile-banco-carrefour
 
 # Usar a versao correta do Node
 nvm use
@@ -47,12 +49,12 @@ npm run setup
 # Android (emulador deve estar rodando)
 npm run test:android
 
-# iOS (simulador deve estar disponivel)
+# iOS (simulador deve estar disponivel - requer Xcode)
 npm run test:ios
 
-# BrowserStack (requer credenciais em .env)
+# BrowserStack (requer credenciais)
 cp .env.example .env
-# Editar .env com suas credenciais
+# Editar .env com suas credenciais BS_USER e BS_KEY
 npm run test:browserstack
 ```
 
@@ -76,36 +78,58 @@ O relatorio inclui:
 
 ```
 desafio-mobile/
-├── config/                  # Configuracoes WDIO por ambiente
-│   ├── wdio.shared.conf.js  # Config base compartilhada
-│   ├── wdio.android.conf.js # Android emulador
-│   ├── wdio.ios.conf.js     # iOS simulador
-│   └── wdio.browserstack.conf.js # BrowserStack
-├── app/                     # APK/IPA (baixados via setup)
+├── config/
+│   ├── wdio.shared.conf.js       # Config base (Mocha, Allure, Appium, hooks)
+│   ├── wdio.android.conf.js      # Capabilities Android emulador
+│   ├── wdio.ios.conf.js          # Capabilities iOS simulador
+│   └── wdio.browserstack.conf.js # Capabilities BrowserStack (Android + iOS)
+├── app/                          # APK/IPA (baixados via npm run setup)
+│   ├── android/
+│   └── ios/
 ├── test/
-│   ├── specs/               # Cenarios de teste
-│   ├── pageobjects/         # Page Objects
-│   └── data/                # Dados para testes data-driven
-├── .gitlab-ci.yml           # Pipeline GitLab CI/CD
-├── .github/workflows/       # Pipeline GitHub Actions
-├── setup.js                 # Script de setup automatizado
+│   ├── specs/                    # Cenarios de teste
+│   │   ├── login.spec.js         # Cenarios 1-3
+│   │   ├── signup.spec.js        # Cenarios 4-5
+│   │   ├── navigation.spec.js    # Cenario 6
+│   │   ├── forms.spec.js         # Cenarios 7-8
+│   │   ├── swipe.spec.js         # Cenario 9
+│   │   └── dragdrop.spec.js      # Cenario 10
+│   ├── pageobjects/              # Page Objects (POM)
+│   │   ├── BasePage.js           # Classe base com helpers cross-platform
+│   │   ├── LoginPage.js
+│   │   ├── SignupPage.js
+│   │   ├── FormsPage.js
+│   │   ├── SwipePage.js
+│   │   ├── DragPage.js
+│   │   └── NavigationBar.js
+│   └── data/                     # Dados para testes data-driven
+│       ├── loginData.json
+│       └── signupData.json
+├── .gitlab-ci.yml                # Pipeline GitLab CI/CD
+├── .github/workflows/test.yml    # Pipeline GitHub Actions
+├── .eslintrc.json                # Configuracao ESLint
+├── .prettierrc                   # Configuracao Prettier
+├── .nvmrc                        # Versao do Node (20)
+├── .env.example                  # Template credenciais BrowserStack
+├── setup.js                      # Setup automatizado (Appium + app download)
+├── package.json
 └── README.md
 ```
 
 ## Cenarios de Teste
 
-| # | Cenario | Tipo |
-|---|---------|------|
-| 1 | Login com credenciais validas | Data-driven |
-| 2 | Login com credenciais invalidas | Data-driven |
-| 3 | Login com campos vazios | Validacao de erro |
-| 4 | Cadastro com sucesso | Data-driven |
-| 5 | Cadastro com senha invalida | Data-driven |
-| 6 | Navegacao entre todas as tabs | Navegacao |
-| 7 | Formulario com switch e dropdown | Formulario |
-| 8 | Validacao de erros no formulario | Validacao de erro |
-| 9 | Swipe horizontal entre cards | Interacao |
-| 10 | Drag and drop de elementos | Interacao |
+| # | Cenario | Spec | Tipo |
+|---|---------|------|------|
+| 1 | Login com credenciais validas | login.spec.js | Data-driven |
+| 2 | Login com email invalido | login.spec.js | Data-driven / Validacao |
+| 3 | Login com campos vazios | login.spec.js | Validacao de erro |
+| 4 | Cadastro com sucesso | signup.spec.js | Data-driven |
+| 5 | Cadastro com senha invalida | signup.spec.js | Data-driven |
+| 6 | Navegacao entre todas as tabs | navigation.spec.js | Navegacao |
+| 7 | Formulario com switch e dropdown | forms.spec.js | Formulario |
+| 8 | Validacao de erros no formulario | forms.spec.js | Validacao de erro |
+| 9 | Swipe horizontal entre cards | swipe.spec.js | Interacao |
+| 10 | Drag and drop de elementos | dragdrop.spec.js | Interacao |
 
 ## CI/CD
 
@@ -116,17 +140,17 @@ Pipeline com 3 stages executado a cada commit ou merge request:
 3. **report** - Gera e publica Allure Report via GitLab Pages
 
 ### GitHub Actions
-Pipeline funcional que roda testes em emulador Android no runner `macos-latest`.
+Pipeline funcional que roda testes em emulador Android no runner `ubuntu-latest` com KVM. Allure Report disponivel como artefato do pipeline.
 
 ## Scripts Disponiveis
 
 | Comando | Descricao |
 |---------|-----------|
-| `npm run setup` | Setup automatizado (Appium + app) |
+| `npm run setup` | Setup automatizado (Appium drivers + app download) |
 | `npm run test:android` | Testes no emulador Android |
 | `npm run test:ios` | Testes no simulador iOS |
 | `npm run test:browserstack` | Testes no BrowserStack |
 | `npm run report:generate` | Gerar Allure Report |
-| `npm run report:open` | Abrir Allure Report |
-| `npm run lint` | Verificar qualidade do codigo |
-| `npm run format` | Formatar codigo |
+| `npm run report:open` | Abrir Allure Report no navegador |
+| `npm run lint` | Verificar qualidade do codigo (ESLint) |
+| `npm run format` | Formatar codigo (Prettier) |
