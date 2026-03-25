@@ -71,10 +71,20 @@ class FormsPage extends BasePage {
     const btn = await this.activeButton;
     const isVisible = await btn.isDisplayed().catch(() => false);
     if (!isVisible) {
-      await driver.execute('mobile: scrollGesture', {
-        left: 100, top: 500, width: 800, height: 500,
-        direction: 'down', percent: 1.0,
-      });
+      // Swipe up to scroll down - works on all API levels
+      const screen = await driver.getWindowRect();
+      const startY = Math.floor(screen.height * 0.7);
+      const endY = Math.floor(screen.height * 0.3);
+      const x = Math.floor(screen.width * 0.5);
+
+      await driver.action('pointer', { parameters: { pointerType: 'touch' } })
+        .move({ x, y: startY })
+        .down()
+        .move({ x, y: endY, duration: 300 })
+        .up()
+        .perform();
+
+      await driver.pause(500);
     }
   }
 
