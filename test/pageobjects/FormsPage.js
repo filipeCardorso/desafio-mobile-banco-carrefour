@@ -67,7 +67,19 @@ class FormsPage extends BasePage {
     }
   }
 
+  async scrollToButtons() {
+    const btn = await this.activeButton;
+    const isVisible = await btn.isDisplayed().catch(() => false);
+    if (!isVisible) {
+      await driver.execute('mobile: scrollGesture', {
+        left: 100, top: 500, width: 800, height: 500,
+        direction: 'down', percent: 1.0,
+      });
+    }
+  }
+
   async tapActiveButton() {
+    await this.scrollToButtons();
     await this.tapElement(this.activeButton);
   }
 

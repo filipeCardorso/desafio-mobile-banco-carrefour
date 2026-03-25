@@ -39,8 +39,9 @@ describe('Forms', () => {
     allure.addFeature('Forms');
     allure.addSeverity('normal');
 
-    // Verify both buttons are displayed
+    // Scroll to buttons and verify both are displayed
     allure.addStep('Verify buttons are displayed');
+    await FormsPage.scrollToButtons();
     const inactiveBtn = await FormsPage.inactiveButton;
     const activeBtn = await FormsPage.activeButton;
     expect(await inactiveBtn.isDisplayed()).to.be.true;
