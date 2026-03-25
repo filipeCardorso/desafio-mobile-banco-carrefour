@@ -50,8 +50,15 @@ class FormsPage extends BasePage {
   async selectDropdown(value) {
     await this.tapElement(this.dropdown);
     if (driver.isAndroid) {
-      const option = await $(`//android.widget.CheckedTextView[@text="${value}"]`);
-      await this.tapElement(option);
+      // Try CheckedTextView first (API 30+), fallback to generic text match
+      try {
+        const option = await $(`//android.widget.CheckedTextView[@text="${value}"]`);
+        await option.waitForDisplayed({ timeout: 3000 });
+        await option.click();
+      } catch {
+        const fallback = await $(`//*[@text="${value}"]`);
+        await this.tapElement(fallback);
+      }
     } else {
       const option = await $(`~${value}`);
       await this.tapElement(option);
