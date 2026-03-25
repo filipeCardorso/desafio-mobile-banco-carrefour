@@ -28,26 +28,21 @@ describe('Login', () => {
     expect(emailText === 'Email' || emailText === '' || emailText === null).to.be.true;
   });
 
-  // Scenario 2: Login with invalid email format shows validation error
-  it('should show validation error for invalid email format', async () => {
-    allure.addFeature('Login');
-    allure.addSeverity('critical');
+  // Scenario 2: Login with invalid email format (data-driven)
+  loginData.invalidEmail.forEach((data) => {
+    it(`should show validation error for invalid email: ${data.email}`, async () => {
+      allure.addFeature('Login');
+      allure.addSeverity('critical');
 
-    await LoginPage.setValue(LoginPage.emailField, 'invalid-email');
+      await LoginPage.setValue(LoginPage.emailField, data.email);
 
-    // App shows inline validation for invalid email format
-    const validationError = await LoginPage.getValidationError('valid email');
-    const hasError = await validationError.isExisting();
+      // App shows inline validation error for invalid email format
+      const validationError = await LoginPage.getValidationError(data.expectedError);
+      expect(await validationError.isExisting()).to.be.true;
 
-    if (hasError) {
-      expect(await validationError.isDisplayed()).to.be.true;
-    } else {
-      // If no inline error, verify login button still present
-      expect(await LoginPage.isDisplayed(LoginPage.loginButton)).to.be.true;
-    }
-
-    // Clear for next test
-    await LoginPage.setValue(LoginPage.emailField, '');
+      // Clear for next test
+      await LoginPage.setValue(LoginPage.emailField, '');
+    });
   });
 
   // Scenario 1: Login with valid credentials (data-driven - runs last)

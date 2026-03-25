@@ -2,7 +2,7 @@
   "valid": [
     { "email": "valid@test.com", "password": "Password123" }
   ],
-  "invalid": [
-    { "email": "wrong@test.com", "password": "wrong", "expectedError": "Invalid login credentials." }
+  "invalidEmail": [
+    { "email": "invalid-email", "expectedError": "Please enter a valid email address" }
   ]
 }
