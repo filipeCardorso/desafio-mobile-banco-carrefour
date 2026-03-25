@@ -8,8 +8,8 @@ exports.config = {
   logLevel: 'info',
   bail: 0,
   waitforTimeout: 10000,
-  connectionRetryTimeout: 30000,
-  connectionRetryCount: 3,
+  connectionRetryTimeout: 120000,
+  connectionRetryCount: 5,
 
   services: ['appium'],
 
