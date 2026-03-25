@@ -11,6 +11,8 @@ exports.config = {
       'appium:automationName': 'UiAutomator2',
       'appium:app': path.join(process.cwd(), 'app', 'android', 'app-debug.apk'),
       'appium:newCommandTimeout': 240,
+      'appium:appWaitDuration': 60000,
+      'appium:androidInstallTimeout': 180000,
       'appium:noReset': false,
     },
   ],

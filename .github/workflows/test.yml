@@ -37,7 +37,10 @@ jobs:
           emulator-boot-timeout: 900
           script: |
             adb wait-for-device
+            adb install -t app/android/app-debug.apk
             npm run test:android
+        env:
+          APPIUM_SKIP_INSTALL: true
 
       - name: Generate Allure Report
         if: always()
