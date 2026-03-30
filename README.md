@@ -1,3 +1,11 @@
+![WebDriverIO](https://img.shields.io/badge/WebDriverIO_9-EA5906?style=flat-square&logo=webdriverio&logoColor=white)
+![Appium](https://img.shields.io/badge/Appium_2-663399?style=flat-square&logo=appium&logoColor=white)
+![Mocha](https://img.shields.io/badge/Mocha-8D6748?style=flat-square&logo=mocha&logoColor=white)
+![Chai](https://img.shields.io/badge/Chai-A30701?style=flat-square&logo=chai&logoColor=white)
+![Allure](https://img.shields.io/badge/Allure_Report-FF5722?style=flat-square&logo=allure&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white)
+![BrowserStack](https://img.shields.io/badge/BrowserStack-FF6C37?style=flat-square&logo=browserstack&logoColor=white)
+
 # Desafio de Automacao de Testes Mobile - Banco Carrefour
 
 Projeto de automacao de testes mobile utilizando o aplicativo [native-demo-app](https://github.com/webdriverio/native-demo-app) (v2.2.0) do WebDriverIO.
